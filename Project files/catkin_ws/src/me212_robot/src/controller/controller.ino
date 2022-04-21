@@ -15,6 +15,11 @@ SerialComm          serialComm;       // serial communication class
 PathPlanner         pathPlanner;      // path planner
 unsigned long       prevTime = 0;
 
+float VL = 0;
+float VR = 0;
+float V_End_Y = 0;
+float V_End_Scoop = 0;
+
 boolean usePathPlanner = false;
 
 void setup() {
@@ -38,12 +43,29 @@ void loop() {
 
         // 3. Send robot odometry through serial port
         serialComm.send(robotPose); 
-        
+  
         // 4. Compute desired wheel velocity without or with motion planner
         if (!usePathPlanner) {
-            // 4.1 a fixed wheel speed for testing odometry
-            pathPlanner.desiredWV_R = 0.2;   
-            pathPlanner.desiredWV_L = 0.2;
+        // 4.1 wheel speed depends on keys pressed
+          if (key == CODED){
+            switch(keyCode){
+              case UP:
+                drive_forwards();
+                break;
+              case DOWN:
+                drive_backwards();
+                break;
+              case LEFT:
+                drive_ccw();
+                break;
+              case RIGHT:
+                drive_cw();
+                break;
+             }
+          } else stall();
+          
+            pathPlanner.desiredWV_R = VR;   
+            pathPlanner.desiredWV_L = VL;
         }
         else{
             // 4.2 compute wheel speed from using a navigation policy
@@ -58,6 +80,48 @@ void loop() {
     } 
 }
 
+void drive_forwards() {
+  VL = 100;
+  VR = 100;
+}
 
+void drive_backwards() {
+  VL = -100;
+  VR = -100;
+}
 
+void drive_cw() {
+  VL = 50;
+  VR = -50;
+}
 
+void drive_ccw() {
+  VL = -50;
+  VR = 50;
+}
+
+void stall(){
+  //Setting both wheel velocities to zero, at stopped position
+  VL = 0;
+  VR = 0;
+}
+
+void lift_up() {
+  //if not at max height
+    //Increase target height by some incremental value
+}
+
+void lift_down() {
+  //if not at min height
+    //Decrease target height by some incremental value
+}
+
+void spin_cw() {
+  //If not at max theta
+    //Increase theta by some value
+}
+
+void spin_ccw() {
+  //If not at min theta
+    Decrease by some value
+}
