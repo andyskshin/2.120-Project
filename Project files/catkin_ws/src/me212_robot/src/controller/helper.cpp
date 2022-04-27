@@ -61,25 +61,18 @@ void EncoderMeasurement::update() {
 //RobotPose Class function implementation
 void RobotPose::update(float dPhiL, float dPhiR) {
     // orientation angle theta increment in radians
-    float dTh;
+    float dTh = (r/(2.0*b))*(dPhiR-dPhiL);
+
+    Th += dTh;
     
     // robot X, Y position increment in meters
-    float dX, dY;
+    float dX = (r/2.0)*cos(Th)*(dPhiR + dPhiL);
+    float dY = (r/2.0)*sin(Th)*(dPhiR + dPhiL);
     
-    // MODIFY CODE BELOW TO SET THE CORRECT VALUES
-    //   Relavent constants: r, b
-    //   Relavent function: sqrt()
-    //   Use the equations referenced in the handout to set these values.
-    
-    // dTh = ;
-    // dX = ;
-    // dY = ;
-    
-    // Th = ;
-    // X = ;
-    // Y = ;
+    X += dX;
+    Y += dY;
 
-    // pathDistance += ;
+    pathDistance += sqrt(dX*dX + dY*dY);
 }
 
 //PathPlanner Class function implementation
@@ -152,5 +145,3 @@ void PIController::doPIControl(String side, float desV, float currV) {
         Serial.println("ERROR: INVALID MOTOR CHOICE GIVEN TO PI CONTROLLER");
     }
 }
-
-

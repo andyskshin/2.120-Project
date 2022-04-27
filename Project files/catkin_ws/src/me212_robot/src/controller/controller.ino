@@ -17,8 +17,6 @@ unsigned long       prevTime = 0;
 
 float VL = 0;
 float VR = 0;
-float V_End_Y = 0;
-float V_End_Scoop = 0;
 
 boolean usePathPlanner = false;
 
@@ -47,25 +45,22 @@ void loop() {
         // 4. Compute desired wheel velocity without or with motion planner
         if (!usePathPlanner) {
         // 4.1 wheel speed depends on keys pressed
-          if (key == CODED){
-            switch(keyCode){
-              case UP:
-                drive_forwards();
-                break;
-              case DOWN:
-                drive_backwards();
-                break;
-              case LEFT:
-                drive_ccw();
-                break;
-              case RIGHT:
-                drive_cw();
-                break;
-             }
-          } else stall();
-          
-            pathPlanner.desiredWV_R = VR;   
-            pathPlanner.desiredWV_L = VL;
+          while (Serial.available()){
+            delay(2);
+            char c = Serial.read();
+            if (c == 'w'){
+              drive_forwards();
+            } else if (c == 's'){
+              drive_backwards();
+            } else if (c == 'a'){
+              drive_ccw();
+            } else if (c == 'd'){
+              drive_cw(); 
+            } else if (c == ' '){
+              stall();
+            }
+          pathPlanner.desiredWV_R = VR;   
+          pathPlanner.desiredWV_L = VL;
         }
         else{
             // 4.2 compute wheel speed from using a navigation policy
@@ -103,25 +98,5 @@ void drive_ccw() {
 void stall(){
   //Setting both wheel velocities to zero, at stopped position
   VL = 0;
-  VR = 0;
-}
-
-void lift_up() {
-  //if not at max height
-    //Increase target height by some incremental value
-}
-
-void lift_down() {
-  //if not at min height
-    //Decrease target height by some incremental value
-}
-
-void spin_cw() {
-  //If not at max theta
-    //Increase theta by some value
-}
-
-void spin_ccw() {
-  //If not at min theta
-    Decrease by some value
+  VR = 0; 
 }

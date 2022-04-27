@@ -13,6 +13,7 @@
 #include "LS7366.h"
 
 
+
 //Some useful constant definitions
 const float FREQ = 1000.0;                         // (Hz)
 const float PERIOD = 1.0 / FREQ;
